@@ -1,23 +1,23 @@
-# ==============================================================================
+# =============================================================================
 # Project : Online Retail Analysis
-# Script  : 06_01_sales_overview.R
-# Purpose : Exploratory Data Analysis (EDA) - Sales Overview
+# Script  : sales_overview.R
+# Purpose: Perform exploratory data analysis (EDA) by generating
+#          sales overview KPIs and visualizations.
 # Author  : Johnson
 # ==============================================================================
 
 
-# 1. Load Packages
+# 1. Load Project Dependencies
 
-library(tidyverse)
-library(here)
-library(scales)
+source(here::here("R", "helpers", "load_packages.R"))
+source(here::here("R", "helpers", "project_paths.R"))
+source(here::here("R", "helpers", "load_data.R"))
+source(here::here("R", "helpers", "plot_theme.R"))
+source(here::here("R", "helpers", "helper_functions.R"))
+source(here::here("R", "helpers", "save_outputs.R"))
 
 
-# 2. Load Feature-Engineered Data
-
-retail_features <- readRDS(
-  here("data", "features", "retail_features.rds")
-)
+# Create Analysis Dataset
 
 # Prepare Sales Dataset
 # Exclude cancelled orders and returns to analyze completed sales only.
@@ -55,8 +55,8 @@ print(sales_overview)
 sales_overview_formatted <- sales_overview |> 
   mutate(
     Value = case_when(
-      Matric ==  "Total Revenue" ~ dollar(Value),
-      TRUE ~ comma(Value)
+      Matric ==  "Total Revenue" ~ format_currency(Value),
+      TRUE ~ format_number(Value)
     )
   )
 
@@ -65,17 +65,16 @@ print(sales_overview_formatted)
 
 # 5. Save KPI Summary
 
-tables_dir <- here("outputs", "tables")
 
-if(!dir.exists(tables_dir)) {
-  dir.create(tables_dir, 
+if(!dir.exists(PATH_TABLES)) {
+  dir.create(PATH_TABLES, 
              recursive = TRUE)
 }
 
 
 write.csv(
   sales_overview,
-  file = here("Outputs", "tables", "sales_overview.csv"),
+  file.path(PATH_TABLES, "sales_overview.csv"),
   row.names = FALSE
 )
 
@@ -84,50 +83,47 @@ write.csv(
 
 # Monthly revenue:
 monthly_sales <- sales_data |> 
-  group_by(invoice_year, invoice_month_number) |> 
+  group_by(invoice_year, invoice_month_number, invoice_month) |> 
   summarise(
     revenue = sum(sales_amount, na.rm = TRUE),
     .groups = "drop"
   )
 
+print(monthly_sales)
+
 # Monthly Revenue Plot:
 monthly_sales_plot <- ggplot(
   monthly_sales,
   aes(
-    x = invoice_month_number,
-    y = revenue
+    x = invoice_month,
+    y = revenue,
+    group = invoice_year 
   )
 ) +
   geom_line() +
   geom_point() +
+  scale_y_continuous(labels = scales::comma) +
   labs(
     title = "Monthly Revenue",
+    subtitle = "Completed Sales Onlyrr",
     x = "Month",
     y = "Revenue"
-  )
+  ) +
+  theme_retail()
 
 # Display Plot  
 print(monthly_sales_plot)
 
 
-# 7. Save the chart
+# 7. Save the Plot
 
-plots_dir <- here("outputs", "plots")
+save_plot(monthly_sales_plot, "monthly_revenue.png")
 
-if(!dir.exists(plots_dir)) {
-  dir.create(plots_dir, recursive = TRUE)
-}
 
-# Save the figure:
-ggsave(
-  filename = here(
-    "outputs",
-    "plots",
-    "monthly_revenue.png"
-  ),
-  plot = monthly_sales_plot,
-  width = 8,
-  height = 5,
-  dpi = 300
+# ============================================================
+# Completion Message
+# ============================================================
+
+message(
+  "\n✓ Sales overview analysis completed successfully."
 )
-
