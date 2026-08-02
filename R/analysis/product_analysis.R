@@ -14,6 +14,7 @@ source(here::here("R", "helpers", "project_paths.R"))
 source(here::here("R", "helpers", "load_data.R"))
 source(here::here("R", "helpers", "plot_theme.R"))
 source(here::here("R", "helpers", "helper_functions.R"))
+source(here::here("R", "helpers", "save_outputs.R"))
 
 
 # Prepare Analysis Dataset
@@ -58,17 +59,6 @@ top_products_revenue <-
 print(top_products_revenue)
 
 
-# Save the table
-
-write.csv(
-  top_products_revenue,
-  file.path(
-    PATH_TABLES,
-    "top_products_revenue.csv"
-  ),
-  row.names = FALSE
-)
-
 
 # Plot Revenue
 
@@ -92,17 +82,6 @@ top_products_revenue_plot <-
 print(top_products_revenue_plot)
 
 
-ggsave(
-  filename = file.path(
-    PATH_PLOTS,
-    "top_products_revenue_plot.png"
-  ),
-  plot = top_products_revenue_plot,
-  width  = 10,
-  height = 6,
-  dpi = 300
-)
-
 
 # Top 10 Products by Quantity
 
@@ -113,15 +92,6 @@ top_products_quantity <-
 
 print(top_products_quantity)
 
-
-write.csv(
-  top_products_quantity,
-  file.path(
-     PATH_TABLES,
-     "top_products_quantity.csv"
-     ),
-  row.names = FALSE
-  )
 
 
 # Plot Quantity
@@ -146,25 +116,52 @@ top_products_quantity_plot <-
 print(top_products_quantity_plot)
 
 
-ggsave(
-  filename = file.path(
-      PATH_PLOTS,
-      "top_products_quantity_plot.png"
-    ),
-  plot = top_products_quantity_plot,
-  width = 12,
-  height = 6,
-  dpi = 300
+
+# Save Outputs
+
+print_section("Saving Outputs")
+
+
+create_output_directories()
+
+
+# Save tables
+
+save_table(
+  top_products_revenue,
+  "top_products_revenue.csv"
 )
 
+save_table(
+  top_products_quantity,
+  "top_products_quantity.csv"
+)
 
-# Save the Full Product Summary
-
-write.csv(
+save_table(
   product_summary,
-  file.path(
-    PATH_TABLES,
-    "product_summary.csv"
-  ),
-  row.names = FALSE
+  "product_summary.csv"
 )
+
+
+# Save plots
+
+save_plot(
+  top_products_revenue_plot,
+  "top_products_revenue.png"
+)
+
+
+save_plot(
+  top_products_quantity_plot,
+  "top_products_quantity.png"
+)
+
+# ============================================================
+# Completion Message
+# ============================================================
+
+message(
+  "\n✓ Products analysis completed successfully."
+)
+
+

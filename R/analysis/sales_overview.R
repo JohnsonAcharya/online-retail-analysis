@@ -17,26 +17,27 @@ source(here::here("R", "helpers", "helper_functions.R"))
 source(here::here("R", "helpers", "save_outputs.R"))
 
 
-# Create Analysis Dataset
+# 2. Create Analysis Dataset
 
 # Prepare Sales Dataset
-# Exclude cancelled orders and returns to analyze completed sales only.
+# Exclude cancelled orders and returns.
+# Analyze completed sales only.
 
 sales_data <- retail_features |> 
   filter(
-  !is_cancelled, 
-  quantity > 0
+    !is_cancelled, 
+    quantity > 0
   )
 
 
-# 3. Overall Sales KPIs
+# 3. Calculate Overall Sales KPIs
 
 sales_overview <- tibble(
-  Matric = c(
+  Metric = c(
     "Total Revenue",
-    "Total Order",
-    "Total Customer",
-    "Total Product Sold"
+    "Total Orders",
+    "Total Customers",
+    "Total Products Sold"
   ),
   Value = c(
     sum(sales_data$sales_amount, na.rm = TRUE),
@@ -46,16 +47,16 @@ sales_overview <- tibble(
   )
 )
 
-# Display raw KPI table
 print(sales_overview)
 
 
-# 4. # Format KPIs for Presentation
+
+# 4. Format Sales KPIs
 
 sales_overview_formatted <- sales_overview |> 
   mutate(
     Value = case_when(
-      Matric ==  "Total Revenue" ~ format_currency(Value),
+      Metric ==  "Total Revenue" ~ format_currency(Value),
       TRUE ~ format_number(Value)
     )
   )
@@ -63,41 +64,30 @@ sales_overview_formatted <- sales_overview |>
 print(sales_overview_formatted)
 
 
-# 5. Save KPI Summary
 
+# 5. Monthly Revenue Summary
 
-if(!dir.exists(PATH_TABLES)) {
-  dir.create(PATH_TABLES, 
-             recursive = TRUE)
-}
-
-
-write.csv(
-  sales_overview,
-  file.path(PATH_TABLES, "sales_overview.csv"),
-  row.names = FALSE
-)
-
-
-# 6. Create your first chart
-
-# Monthly revenue:
 monthly_sales <- sales_data |> 
   group_by(invoice_year, invoice_month_number, invoice_month) |> 
   summarise(
     revenue = sum(sales_amount, na.rm = TRUE),
     .groups = "drop"
-  )
+  ) |> 
+  arrange(invoice_year, invoice_month_number)
 
 print(monthly_sales)
 
-# Monthly Revenue Plot:
+
+
+# 6. Monthly Revenue Plot
+
 monthly_sales_plot <- ggplot(
   monthly_sales,
   aes(
     x = invoice_month,
     y = revenue,
-    group = invoice_year 
+    group = invoice_year,
+    colour = factor(invoice_year)
   )
 ) +
   geom_line() +
@@ -105,19 +95,34 @@ monthly_sales_plot <- ggplot(
   scale_y_continuous(labels = scales::comma) +
   labs(
     title = "Monthly Revenue",
-    subtitle = "Completed Sales Onlyrr",
+    subtitle = "Completed Sales Only",
     x = "Month",
     y = "Revenue"
   ) +
   theme_retail()
 
-# Display Plot  
 print(monthly_sales_plot)
 
 
-# 7. Save the Plot
 
-save_plot(monthly_sales_plot, "monthly_revenue.png")
+# 7. Save Outputs
+
+print_section("Saving Outputs")
+
+
+create_output_directories()
+
+# Save tables
+save_table(
+  sales_overview,
+  "sales_overview.csv"
+  )
+
+# Save plots
+save_plot(
+  monthly_sales_plot,
+  "monthly_revenue.png"
+  )
 
 
 # ============================================================

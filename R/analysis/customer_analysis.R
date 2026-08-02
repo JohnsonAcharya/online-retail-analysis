@@ -16,6 +16,7 @@ source(here::here("R", "helpers", "project_paths.R"))
 source(here::here("R", "helpers", "load_data.R"))
 source(here::here("R", "helpers", "plot_theme.R"))
 source(here::here("R", "helpers", "helper_functions.R"))
+source(here::here("R", "helpers", "save_outputs.R"))
 
 
 # Create Customer Dataset
@@ -119,17 +120,6 @@ top_customers_revenue_plot <-
   theme_retail()
 
 
-ggsave(
-  filename = file.path(
-    PATH_PLOTS,
-    "top_customers_revenue_plot.png"
-  ),
-  plot = top_customers_revenue_plot,
-  width = 10,
-  height = 6,
-  dpi = 300
-)
-
 
 # Top Customers by Orders
 
@@ -166,18 +156,6 @@ top_customers_orders_plot <-
   theme_retail()
 
 
-ggsave(
-  filename = file.path(
-    PATH_PLOTS,
-    "top_customers_orders_plot.png"
-  ),
-  plot = top_customers_orders_plot,
-  width = 10,
-  height = 6,
-  dpi = 300
-)
-
-
 
 # Customer Order Distribution - Orders per Customer
 
@@ -191,56 +169,60 @@ customer_order_distribution_plot <-
   theme_retail()
 
 
-ggsave(
-  filename = file.path(
-    PATH_PLOTS,
-    "customer_order_distribution_plot.png"
-  ),
-  plot = customer_order_distribution_plot,
-  width = 10,
-  height = 6,
-  dpi = 300
+
+# Save Outputs
+
+print_section("Saving Outputs")
+
+
+create_output_directories()
+
+
+
+# Save Plots
+
+save_plot(
+  top_customers_revenue_plot,
+  "top_customers_revenue.png"
 )
+
+
+save_plot(
+  top_customers_orders_plot,
+  "top_customers_orders.png"
+)
+
+
+save_plot(
+  customer_order_distribution_plot,
+  "customer_order_distribution.png"
+)
+
 
 
 # Save Tables
 
-write.csv(
+save_table(
   customer_summary,
-  file.path(
-    PATH_TABLES,
-    "customer_summary.csv"
-  ),
-  row.names = FALSE
+  "customer_summary.csv"
 )
 
 
-write.csv(
+save_table(
   customer_statistics,
-  file.path(
-    PATH_TABLES,
-    "customer_statistics.csv"
-  ),
-  row.names = FALSE
+  "customer_statistics.csv"
 )
 
-write.csv(
+
+save_table(
   top_customers_revenue,
-  file.path(
-    PATH_TABLES,
-    "top_customers_revenue.csv"
-  ),
-  row.names = FALSE
+  "top_customers_revenue.csv"
 )
 
 
-write.csv(
+save_table(
   top_customers_orders,
-  file.path(
-    PATH_TABLES,
-    "top_customers_orders.csv"
-  ),
-  row.names = FALSE
+  "top_customers_orders.csv"
 )
 
 
@@ -249,6 +231,4 @@ write.csv(
 
 message("======================================")
 message("Customer analysis completed successfully.")
-message("Tables saved to: outputs/tables/")
-message("Plots saved to: outputs/plots/")
 message("======================================")
