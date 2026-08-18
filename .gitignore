@@ -1,6 +1,12 @@
-.Rproj.user
+# R / RStudio
+.Rproj.user/
 .Rhistory
 .RData
 .Ruserdata
-my_test.xlsx 
-'~$*.xlsx' 
+
+# Temporary Excel files
+~$*.xlsx
+
+# Quarto rendered output
+reports/*.html
+reports/*_files/

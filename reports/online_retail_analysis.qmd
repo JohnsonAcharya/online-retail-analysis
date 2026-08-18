@@ -1,0 +1,68 @@
+---
+title: "Online Retail Data Analysis"
+subtitle: "Sales, Customer, Product, Country and Cancellation Insights"
+author: "Johnson"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    code-tools: true
+    embed-resources: false
+    fig-width: 10
+    fig-height: 6
+    theme: cosmo
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+# Executive Summary
+
+This report analyzes online retail transaction data to identify key sales, customer, product, geographic and cancellation trends.
+
+The analysis focuses on understanding overall business performance, identifying high-performing products and customers, evaluating geographic patterns, and understanding cancellation activity.
+
+# Introduction
+
+## Business Context
+
+Online retail businesses generate large volumes of transactional data that can be used to understand purchasing behavior, revenue patterns, product performance and customer activity.
+
+This analysis uses historical online retail transaction data to explore these business questions.
+
+## Objectives
+
+The main objectives of this analysis are to:
+
+-   Understand overall sales performance
+-   Identify monthly and seasonal sales patterns
+-   Identify high-value customers
+-   Identify high-performing products
+-   Compare country-level performance
+-   Analyze order cancellations
+-   Generate actionable business recommendations
+
+## Analysis Areas
+
+The analysis covers the following areas:
+
+-   Sales Overview
+-   Time Analysis
+-   Customer Analysis
+-   Product Analysis
+-   Country Analysis
+-   Cancellation Analysis
+
+## Data Source
+
+The analysis is based on the Online Retail transactional dataset.
+
+The raw dataset is stored in:
+
+`data/raw/Online_Retail.xlsx`
+
+The analysis pipeline transforms the raw data into cleaned and feature-engineered datasets before the business analysis is performed.
