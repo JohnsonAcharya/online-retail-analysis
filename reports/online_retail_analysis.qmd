@@ -1,7 +1,7 @@
 ---
 title: "Online Retail Data Analysis"
 subtitle: "Sales, Customer, Product, Country and Cancellation Insights"
-author: "Johnson"
+author: "Johnson Acharya"
 date: today
 format:
   html:
@@ -10,7 +10,7 @@ format:
     number-sections: true
     code-fold: true
     code-tools: true
-    embed-resources: false
+    embed-resources: true
     fig-width: 10
     fig-height: 6
     theme: cosmo
@@ -66,3 +66,65 @@ The raw dataset is stored in:
 `data/raw/Online_Retail.xlsx`
 
 The analysis pipeline transforms the raw data into cleaned and feature-engineered datasets before the business analysis is performed.
+
+
+# Sales Performance
+
+## Overview
+
+This section evaluates the overall sales performance of the online
+retail business using revenue, order and customer-level metrics.
+
+The analysis focuses on understanding the scale of the business and
+identifying the overall sales trend across the available period.
+
+### Overall Sales KPIs
+
+```{r}
+sales_overview <- readr::read_csv(
+  "../outputs/tables/sales_overview.csv",
+  show_col_types = FALSE
+)
+
+knitr::kable(
+  sales_overview,
+  digits = 2,
+  caption = "Overall Sales Performance"
+)
+```
+
+### Annual Sales Performance
+
+Annual sales performance provides a high-level view of how revenue
+changed across the available years.
+
+```{r}
+annual_sales <- readr::read_csv(
+  "../outputs/tables/annual_sales.csv",
+  show_col_types = FALSE
+)
+
+knitr::kable(
+  annual_sales,
+  digits = 2,
+  caption = "Annual Sales Performance"
+)
+```
+
+### Monthly Revenue Trend
+
+Monthly revenue helps identify periods of higher and lower sales
+activity and provides insight into the seasonal pattern of the
+business.
+
+```{r}
+knitr::include_graphics(
+  "../outputs/plots/monthly_revenue.png"
+)
+```
+
+### Interpretation
+
+Monthly revenue varies across the year, with some months showing stronger sales than others. The lowest revenue was recorded in February 2011 at approximately 523,000, while revenue increased during several months that followed.
+
+Sales were particularly strong from September to November 2011, with revenue reaching its highest level in November at approximately 1.50 million. Overall, the chart suggests that the business experienced stronger sales activity toward the later months of 2011
