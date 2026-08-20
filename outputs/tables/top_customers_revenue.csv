@@ -1,4 +1,4 @@
-customer_id,total_revenue,total_orders,total_products,average_order_value,first_purchase,last_purchase
+customer_id,total_revenue,total_orders,total_units,average_order_value,first_purchase,last_purchase
 14646,280206.02,74,197491,3786.567837837838,2010-12-20T10:09:00Z,2011-12-08T12:12:00Z
 18102,259657.3,60,64124,4327.621666666667,2010-12-07T16:42:00Z,2011-12-09T11:50:00Z
 17450,194390.79,46,69973,4225.886739130435,2010-12-07T09:23:00Z,2011-12-01T13:29:00Z

@@ -111,6 +111,7 @@ knitr::kable(
 )
 ```
 
+
 # Time & Seasonality Report
 
 ## Overview
@@ -305,3 +306,192 @@ records the highest hourly revenue at approximately 1.44 million.
 Overall, the findings indicate strong late-year sales activity, differences in 
 purchasing activity across weekdays, and a clear concentration of transactions 
 during daytime hours. These patterns can support operational planning, inventory management, staffing decisions, and targeted marketing activities.
+
+
+
+# Customer Performance
+
+## Overview
+
+Customer analysis provides insight into the size, value, frequency, and retention characteristics of the customer base.
+
+This section evaluates customer revenue, order frequency, average order value, purchasing volume, and repeat-purchase behavior. It also identifies high-value and high-frequency customers to understand the different ways customers contribute to overall business performance.
+
+
+### Customer Base Overview
+
+The customer base is summarized using the number of unique customers, average revenue per customer, average number of orders, average units purchased, and average order value.
+
+```{r}
+customer_statistics <- readr::read_csv(
+  "../outputs/tables/customer_statistics.csv",
+  show_col_types = FALSE
+)
+
+knitr::kable(
+  customer_statistics,
+  digits = 2,
+  caption = "Customer Base Statistics"
+)
+```
+The analysis identifies 4,339 unique customers. Customers place an average of 4.27 orders and generate approximately 2,048 in revenue on average. The average order value is approximately 418.
+
+The customer base therefore includes both relatively frequent repeat purchasers and customers with limited purchasing activity.
+
+
+### Customer Retention
+
+Repeat purchasing is an important indicator of customer engagement. Customers are classified as repeat customers when they have placed more than one order, while customers with a single order are classified as one-time customers.
+
+```{r}
+customer_retention <- customer_statistics |>
+  dplyr::filter(Metric %in% c("Repeat Customers", "One-Time Customers")) |>
+  dplyr::mutate(
+    Customer_Type = Metric,
+    Customers = Value,
+    Percentage = Value / customer_statistics$Value[
+      customer_statistics$Metric == "Unique Customers"
+    ] * 100
+  ) |>
+  dplyr::select(Customer_Type, Customers, Percentage)
+
+knitr::kable(
+  customer_retention,
+  digits = 1,
+  caption = "Customer Repeat-Purchase Profile"
+)
+```
+Repeat customers account for approximately 65.6% of the customer base, while one-time customers account for approximately 34.4%.
+
+This indicates that repeat purchasing represents an important component of customer activity. The proportion of one-time customers also represents a potential opportunity for targeted retention and re-engagement strategies.
+
+
+### Top Customers by Revenue
+
+The highest-revenue customers are examined to identify customers who contribute substantially to overall sales.
+
+```{r}
+top_customers_revenue <- readr::read_csv(
+  "../outputs/tables/top_customers_revenue.csv",
+  show_col_types = FALSE
+)
+
+knitr::kable(
+  top_customers_revenue,
+  digits = 2,
+  caption = "Top Customers by Revenue"
+)
+```
+
+```{r}
+knitr::include_graphics(
+  "../outputs/plots/top_customers_revenue.png"
+)
+```
+
+Customer revenue is highly concentrated among a relatively small number of customers.
+
+Customer 14646 generates approximately 280.2K in revenue across 74 orders, while customer 18102 generates approximately 259.7K across 60 orders. Customer 17450 generates approximately 194.4K across 46 orders.
+
+The results also show that high customer revenue can arise from very different purchasing patterns. For example, customer 14911 generates approximately 143.7K across 201 orders, indicating high-frequency purchasing, whereas customer 16446 generates approximately 168.5K from only two orders.
+
+This demonstrates that customer value should not be evaluated using revenue alone. Order frequency and average order value provide important additional context.
+
+::: {.callout-warning}
+
+High-Value Customer Outliers
+
+Some customers generate exceptionally large revenue despite placing only a small number of orders.
+
+These observations should be investigated separately because the underlying Online Retail dataset contains unusually large-volume transactions and cancellation records. High-value observations should therefore not automatically be interpreted as representative customer behavior.
+:::
+
+
+### Most Frequent Customers
+
+Customer frequency provides a different perspective on customer engagement by identifying customers with the highest number of orders.
+
+```{r}
+top_customers_orders <- readr::read_csv(
+  "../outputs/tables/top_customers_orders.csv",
+  show_col_types = FALSE
+)
+
+knitr::kable(
+  top_customers_orders,
+  digits = 2,
+  caption = "Top Customers by Numbers of Orders"
+)
+```
+
+```{r}
+knitr::include_graphics(
+  "../outputs/plots/top_customers_orders.png"
+)
+```
+Customer 12748 is the most frequent purchaser, with 210 orders, followed by customer 14911 with 201 orders.
+
+The comparison between these customers demonstrates that order frequency and customer revenue do not necessarily move together. Customer 12748 has a substantially lower average order value than customer 14911 despite having a similar number of orders.
+
+This suggests that customer segmentation should consider multiple dimensions, including revenue, order frequency, and average order value.
+
+
+### Customer Order Distribution
+
+The distribution of orders per customer provides an overview of purchasing frequency across the wider customer base.
+
+```{r}
+knitr::include_graphics(
+  "../outputs/plots/customer_order_distribution.png"
+)
+```
+
+The customer order distribution shows that purchasing frequency varies considerably across the customer base. A substantial proportion of customers place relatively few orders, while a smaller group of highly engaged customers places orders much more frequently.
+
+This pattern supports the distinction between one-time, repeat, and highly frequent customers when evaluating customer engagement.
+
+
+### Geographic Customer Concentration
+
+The table below summarizes customer activity across countries.
+
+```{r}
+top_countries_customers <- readr::read_csv(
+  "../outputs/tables/top_countries_customers.csv",
+  show_col_types = FALSE
+)
+
+knitr::kable(
+  top_countries_customers,
+  digits = 2,
+  caption = "Top Countries by Customer Activity"
+)
+```
+
+
+```{r}
+knitr::include_graphics(
+  "../outputs/plots/country_customer.png"
+)
+```
+
+The United Kingdom accounts for approximately 3,922 customers, 18,786 orders, and 8.98 million in revenue, making it by far the largest customer market in the dataset.
+
+Germany and France have substantially smaller customer bases, with 94 and 88 customers respectively. Their revenue contributions are also considerably lower than those of the United Kingdom.
+
+This indicates a strong concentration of the customer base in the United Kingdom. While the domestic market represents the core customer base, the relatively smaller customer populations in other countries may indicate opportunities for international customer acquisition and market expansion.
+
+
+### Customer Performance Insights
+
+The customer analysis identifies several important patterns.
+
+First, the business has a relatively strong repeat-customer base, with approximately 65.6% of customers placing more than one order. However, approximately 34.4% of customers are one-time purchasers, representing a potential opportunity for customer retention and re-engagement.
+
+Second, customer value varies substantially. Some high-value customers generate revenue through frequent purchases, while others generate substantial revenue through a small number of unusually large orders. This highlights the importance of evaluating customers using multiple measures rather than relying on revenue alone.
+
+Third, customer frequency and customer value are not necessarily equivalent. Customer 12748 has the highest number of orders, while customer 14911 combines similarly high purchasing frequency with substantially higher revenue.
+
+Finally, the customer base is highly concentrated in the United Kingdom. This provides a strong domestic customer foundation while also highlighting the potential for international customer growth.
+
+Overall, customer performance analysis indicates that retention of valuable repeat customers, re-engagement of one-time customers, and identification of high-value purchasing segments could support future customer-focused strategies.

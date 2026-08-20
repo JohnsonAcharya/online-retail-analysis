@@ -40,7 +40,7 @@ customer_summary <-
     
     total_revenue = sum(sales_amount, na.rm = TRUE),
     total_orders = n_distinct(invoice_no),
-    total_products = sum(quantity, na.rm = TRUE),
+    total_units = sum(quantity, na.rm = TRUE),
     average_order_value = total_revenue/total_orders,
     first_purchase = min(invoice_date),
     last_purchase = max(invoice_date),
@@ -64,7 +64,7 @@ customer_statistics <-
       "Unique Customers",
       "Average Revenue",
       "Average Orders",
-      "Average Products",
+      "Average Units",
       "Average Order Value",
       "One-Time Customers",
       "Repeat Customers"
@@ -74,7 +74,7 @@ customer_statistics <-
       n_distinct(customer_summary$customer_id),
       mean(customer_summary$total_revenue),
       mean(customer_summary$total_orders),
-      mean(customer_summary$total_products),
+      mean(customer_summary$total_units),
       mean(customer_summary$average_order_value),
       sum(customer_summary$total_orders == 1),
       sum(customer_summary$total_orders > 1)
@@ -149,7 +149,7 @@ top_customers_orders_plot <-
   coord_flip() +
   scale_y_continuous(labels = scales::comma) +
   labs(
-    title = "Top Customer By Orders",
+    title = "Top Customers by Orders",
     x = "Customer",
     y = "Orders"
   ) +
