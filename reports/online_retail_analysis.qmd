@@ -495,3 +495,77 @@ Third, customer frequency and customer value are not necessarily equivalent. Cus
 Finally, the customer base is highly concentrated in the United Kingdom. This provides a strong domestic customer foundation while also highlighting the potential for international customer growth.
 
 Overall, customer performance analysis indicates that retention of valuable repeat customers, re-engagement of one-time customers, and identification of high-value purchasing segments could support future customer-focused strategies.
+
+
+
+# Product Performance
+
+## Overview
+
+This section evaluates product performance using revenue and quantity
+sold to identify the products that contribute most to sales value and
+customer demand.
+
+
+### Top Products by Revenue
+
+This analysis identifies the products that generate the highest
+revenue and make the largest contribution to overall sales value
+
+```{r}
+top_products_revenue <- readr::read_csv(
+  "../outputs/tables/top_products_revenue.csv",
+  show_col_types = FALSE
+)
+
+knitr::kable(
+  top_products_revenue,
+  digits = 2,
+  caption = "Top 10 Products by Total Revenue"
+)
+```
+
+```{r}
+knitr::include_graphics(
+  "../outputs/plots/top_products_revenue.png"
+)
+```
+Regency Cakestand 3 Tier generated the highest product revenue at approximately 170.3K, with 13,510 units sold. White Hanging Heart T-Light Holder ranked second with approximately 99.8K, followed by Party Bunting at 98.6K and Jumbo Bag Red Retrospot at 92.6K. The results show that top revenue products achieve strong performance through different combinations of selling price and sales volume, meaning that revenue leaders are not necessarily the products with the highest unit sales.
+
+
+### Top Products by Quantity
+
+This analysis identifies the products with the highest number of units
+sold and provides an indication of customer demand and product volume.
+
+```{r}
+top_products_quantity <- readr::read_csv(
+  "../outputs/tables/top_products_quantity.csv",
+  show_col_types = FALSE
+)
+
+knitr::kable(
+  top_products_quantity,
+  digits = 2,
+  caption = "Top 10 Products by Total Revenue"
+)
+```
+
+```{r}
+knitr::include_graphics(
+  "../outputs/plots/top_products_quantity.png"
+)
+```
+World War 2 Gliders had the highest unit volume. Several lower-priced
+products also appear among the volume leaders. High unit volume does
+not necessarily translate into high revenue.
+
+
+
+### Product Performance Insights
+
+Product performance varies between sales value and sales volume.
+Higher-priced products can generate substantial revenue with fewer
+units sold, while lower-priced products may achieve high volume
+without generating equivalent revenue. Therefore, both revenue and
+quantity should be considered when evaluating product performance.

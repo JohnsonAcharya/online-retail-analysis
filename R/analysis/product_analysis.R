@@ -15,19 +15,29 @@ source(here::here("R", "helpers", "load_data.R"))
 source(here::here("R", "helpers", "plot_theme.R"))
 source(here::here("R", "helpers", "helper_functions.R"))
 source(here::here("R", "helpers", "save_outputs.R"))
+source(here::here("R", "helpers", "non_merchandise_codes.R"))
 
+## Prepare Analysis Dataset
 
-# Prepare Analysis Dataset
-
-## Exclude returns and cancellations.
+# Prepare product sales data by keeping valid sales only.
+# Exclude cancellations, non-positive quantities/prices,
+# cancellation pairs, and non-merchandise transactions.
 
 product_data <- 
   retail_features |> 
   filter(
     !is_cancelled,
     quantity > 0,
-    unit_price > 0
-    )
+    unit_price > 0,
+    !is_cancelled_pair
+    ) |> 
+  mutate(
+    stock_code = str_to_upper(stock_code)
+  ) |> 
+  anti_join(
+    non_merchandise,
+    by = "stock_code"
+  )
 
 # Product Summary
 

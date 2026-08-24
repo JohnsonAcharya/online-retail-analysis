@@ -20,6 +20,7 @@ retail_clean <- readRDS(
 )
 
 
+
 # 3. Create Working Copy
 
 retail_features <- retail_clean
@@ -29,7 +30,7 @@ retail_features <- retail_clean
 
 retail_features <- retail_features |> 
   mutate(
-    
+    transaction_id = row_number(),
     # Revenue Feature
     
     sales_amount = quantity * unit_price,
@@ -47,8 +48,79 @@ retail_features <- retail_features |>
     
     is_cancelled = str_starts(invoice_no, "C"),
     is_return = quantity < 0,
-    is_sale = quantity > 0
+    is_sale = quantity > 0,
     
+    is_cancelled_pair = FALSE
+    
+  )
+
+
+
+# Identify Cancellation Pairs
+# ===========================
+
+# Match each cancellation with the most recent eligible original sale
+# using product, customer, price, and quantity. The original sale must
+# occur before the cancellation. Mark both transactions as a cancellation pair.
+
+# Cancellation transactions
+cancellation_pairs <- retail_features |>
+  filter(
+    is_cancelled,
+    quantity < 0
+  ) |>
+  transmute(
+    stock_code,
+    customer_id,
+    unit_price,
+    cancelled_quantity = abs(quantity),
+    cancellation_date = invoice_date
+  )
+
+
+
+# Identify original sales associated with cancellations
+
+cancelled_sales <- retail_features |>
+  filter(
+    is_sale,
+    !is_cancelled
+  ) |> 
+  inner_join(
+    cancellation_pairs,
+    by = c(
+      "stock_code",
+      "customer_id",
+      "unit_price"
+    ),
+    relationship = "many-to-many"
+  ) |>
+  filter(
+    quantity == cancelled_quantity,
+    invoice_date < cancellation_date
+  ) |> 
+  group_by(
+    stock_code,
+    customer_id,
+    quantity,
+    unit_price,
+    cancellation_date
+  ) |> 
+  slice_max(
+    invoice_date,
+    n = 1,
+    with_ties = FALSE
+  ) |> 
+  ungroup() |> 
+  distinct(transaction_id)
+
+
+
+retail_features <- retail_features |>
+  mutate(
+    is_cancelled_pair =
+      is_cancelled |
+      transaction_id %in% cancelled_sales$transaction_id
   )
 
 
@@ -56,13 +128,16 @@ retail_features <- retail_features |>
 
 glimpse(retail_features)
 
+
 # Confirm row count has not changed
 stopifnot(
   nrow(retail_features) == nrow(retail_clean)
 )
 
+
 # Confirm required columns exist
 required_columns <- c(
+  "transaction_id",
   "sales_amount",
   "invoice_year",
   "invoice_month",
@@ -72,7 +147,8 @@ required_columns <- c(
   "invoice_hour",
   "is_cancelled",
   "is_return",
-  "is_sale"
+  "is_sale",
+  "is_cancelled_pair"
 )
 
 stopifnot(
