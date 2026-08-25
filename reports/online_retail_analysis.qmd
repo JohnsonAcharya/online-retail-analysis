@@ -569,3 +569,113 @@ Higher-priced products can generate substantial revenue with fewer
 units sold, while lower-priced products may achieve high volume
 without generating equivalent revenue. Therefore, both revenue and
 quantity should be considered when evaluating product performance.
+
+
+
+# Country Performance
+
+## Overview
+
+The country-level analysis evaluates revenue, customer distribution,
+order activity, product quantity, and average order value across markets.
+The objective is to identify the most important markets and assess how
+geographically concentrated the business is.
+
+
+### Overall Country Performance
+
+This section provides an overview of the geographic scope and overall sales activity across all countries included in the analysis.
+
+```{r}
+country_statistic <- readr::read_csv(
+  "../outputs/tables/country_statistic.csv",
+  show_col_types = FALSE
+)
+
+knitr::kable(
+  country_statistic,
+  digits = 2,
+  caption = "Overall Country Performance Statistics"
+)
+```
+
+The analysis covers 38 countries, generating approximately 9.86 million in revenue from 19,649 orders and 4,324 customers. Although the business operates across a wide range of countries, sales activity is highly concentrated in a small number of markets, particularly the United Kingdom.
+
+
+### Revenue by Country
+
+This section compares total revenue across countries to identify the largest markets and the main contributors to overall business revenue.
+
+```{r}
+top_countries_revenue <- readr::read_csv(
+  "../outputs/tables/top_countries_revenue.csv",
+  show_col_types = FALSE
+)
+
+knitr::kable(
+  top_countries_revenue,
+  digits = 2,
+  caption = "Top 10 Countries by Revenue"
+)
+```
+
+```{r}
+knitr::include_graphics(
+  "../outputs/plots/country_revenue.png"
+)
+```
+
+The United Kingdom is by far the largest revenue market, generating approximately 8.36 million, which represents around 85% of total revenue. The Netherlands (283K), EIRE (261K), Germany (204K), and France (183K) are the leading international markets, but each contributes substantially less revenue than the UK.
+
+This indicates a strong dependence on the UK market, while the Netherlands, EIRE, Germany, and France represent the main secondary revenue markets.
+
+
+### Customer Distribution by Country
+
+This section examines the distribution of customers across countries and compares customer concentration with revenue performance.
+
+```{r}
+top_countries_customers <- readr::read_csv(
+  "../outputs/tables/top_countries_customers.csv",
+  show_col_types = FALSE
+)
+
+knitr::kable(
+  top_countries_customers,
+  digits = 2,
+  caption = "Top 10 Countries by Customer Count"
+)
+```
+
+```{r}
+knitr::include_graphics(
+  "../outputs/plots/country_customer.png"
+)
+```
+
+The United Kingdom has the largest customer base, with 3,909 customers, representing approximately 90% of the total customer base. Germany and France are the next largest markets, with 94 and 87 customers respectively.
+
+The strong concentration of customers in the UK is consistent with its dominant revenue position. This suggests that the UK's revenue leadership is primarily driven by its substantially larger customer and order base rather than exceptionally high spending per order.
+
+
+### Average Order Value by Country
+
+This section compares average order value (AOV) across countries to understand whether markets generate revenue through higher order values or through a larger number of orders.
+
+```{r}
+knitr::include_graphics(
+  "../outputs/plots/country_average_order_value.png"
+)
+```
+
+Average order value varies considerably across countries. The Netherlands has the highest AOV at approximately 3,048, followed by Australia at 2,587 and Japan at 1,964. In comparison, the UK has an AOV of approximately 470.
+
+Despite having a lower AOV than several smaller markets, the UK generates substantially more revenue because of its much larger number of orders and customers. This indicates that the UK is primarily a volume-driven market, while some smaller international markets generate relatively higher-value orders.
+
+AOV should be interpreted with caution for countries with a small number of orders, as a few large orders can significantly increase the average.
+
+### Country Performance Insights
+
+Overall, the analysis shows that the business is strongly concentrated in the United Kingdom, which dominates revenue, orders, customers, and product quantity. The Netherlands, EIRE, Germany, France, and Australia are the leading international markets, although they operate at a much smaller scale.
+
+The AOV analysis provides an additional perspective: several smaller markets have substantially higher order values than the UK. However, the UK remains the most valuable market because of its much larger customer and order base. This suggests that future international growth could focus on expanding the customer base in existing secondary markets while maintaining the UK's strong core performance.

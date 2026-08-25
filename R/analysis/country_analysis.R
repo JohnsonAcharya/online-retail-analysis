@@ -14,16 +14,29 @@ source(here::here("R", "helpers", "load_data.R"))
 source(here::here("R", "helpers", "plot_theme.R"))
 source(here::here("R", "helpers", "helper_functions.R"))
 source(here::here("R", "helpers", "save_outputs.R"))
+source(here::here("R", "helpers", "non_merchandise_codes.R"))
 
 
+## Create country analysis dataset
 
-# Create analysis dataset
+
+# Keep valid product sales by excluding cancellations, non-positive
+# quantities/prices, cancellation pairs, and non-merchandise transactions.
 
 country_data <- 
   retail_features |> 
   filter(
     !is_cancelled,
-    quantity > 0
+    quantity > 0,
+    unit_price > 0,
+    !is_cancelled_pair
+  ) |> 
+  mutate(
+    stock_code = str_to_upper(stock_code)
+  ) |> 
+  anti_join(
+    non_merchandise,
+    by = "stock_code"
   )
 
 
@@ -36,9 +49,10 @@ country_summary <-
   summarise(
     total_revenue = sum(sales_amount, na.rm = TRUE),
     total_orders = n_distinct(invoice_no),
-    total_customers = n_distinct(customer_id),
+    total_customers = n_distinct(customer_id, na.rm = TRUE),
     total_quantity = sum(quantity, na.rm = TRUE),
-    average_order_value = total_revenue/total_quantity,
+    average_order_value = total_revenue/total_orders,
+    average_unit_price = total_revenue/total_quantity,
     
     .groups = "drop"
     
@@ -55,18 +69,20 @@ summary(country_summary)
 country_statistic <- 
   tibble(
     Metric = c(
-    "Countries",
-    "Average Revenue",
-    "Average Orders"
+      "Total Countries",
+      "Total Revenue",
+      "Total Orders",
+      "Total Customers"
     ),
     Value = c(
       nrow(country_summary),
-      mean(country_summary$total_revenue),
-      mean(country_summary$total_orders)
+      sum(country_summary$total_revenue),
+      sum(country_summary$total_orders),
+      n_distinct(country_data$customer_id, na.rm = TRUE)
     )
   )
 
-print(country_statistic)
+print(country_statistic, width = Inf)
 
 
 
@@ -79,7 +95,7 @@ top_countries_revenue <-
     ) |> 
   slice_head(n = 10)
 
-print(top_countries_revenue)
+print(top_countries_revenue, width = Inf)
 
 
 
