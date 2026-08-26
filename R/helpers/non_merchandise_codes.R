@@ -21,7 +21,10 @@ non_merchandise <- tibble(
     "AMAZONFEE",
     "B",
     "BANK CHARGES",
-    "S"
+    "S",
+    "D",
+    "CRUK"
+    
   ),
   
   category = c(
@@ -32,7 +35,9 @@ non_merchandise <- tibble(
     "fee",
     "financial_adjustment",
     "bank_charge",
-    "sample"
+    "sample",
+    "discount",
+    "commission"
   )
 )
 

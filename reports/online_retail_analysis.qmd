@@ -679,3 +679,159 @@ AOV should be interpreted with caution for countries with a small number of orde
 Overall, the analysis shows that the business is strongly concentrated in the United Kingdom, which dominates revenue, orders, customers, and product quantity. The Netherlands, EIRE, Germany, France, and Australia are the leading international markets, although they operate at a much smaller scale.
 
 The AOV analysis provides an additional perspective: several smaller markets have substantially higher order values than the UK. However, the UK remains the most valuable market because of its much larger customer and order base. This suggests that future international growth could focus on expanding the customer base in existing secondary markets while maintaining the UK's strong core performance.
+
+
+
+# Cancellation Performance
+
+## Overview
+
+This section analyses cancelled transactions to understand the scale and financial impact of cancellations across products, countries, and time. The analysis identifies products and markets with higher cancellation activity and examines monthly cancellation patterns.
+
+### Cancellation Overview
+
+This section summarises the overall level of cancellation activity.
+
+```{r}
+cancellation_kpis <- readr::read_csv(
+  "../outputs/tables/cancellation_kpis.csv",
+  show_col_types = FALSE
+)
+
+knitr::kable(
+  cancellation_kpis,
+  digits = 2,
+  caption = "Cancellation Performance KPIs"
+)
+```
+There were 3,422 cancelled orders out of 23,071 total orders, giving an
+order cancellation rate of approximately 14.8%. Cancelled transactions
+represented approximately 270,017 units and 475.9K in sales value.
+
+This shows that cancellations are a meaningful part of transaction activity
+and should be monitored across products, countries, and time periods.
+
+
+
+### Product Cancellation Analysis
+
+Identify which products experience the greatest cancellation activity.
+
+```{r}
+top_cancelled_products <- readr::read_csv(
+  "../outputs/tables/top_cancelled_products.csv",
+  show_col_types = FALSE
+)
+
+knitr::kable(
+  top_cancelled_products,
+  digits = 2,
+  caption = "Top 10 Products by Cancelled Quantity"
+)
+```
+
+```{r}
+knitr::include_graphics(
+  "../outputs/plots/top_cancelled_products.png"
+)
+```
+
+Cancellation activity is concentrated in a small number of products.
+PAPER CRAFT, LITTLE BIRDIE had the highest cancelled quantity at
+approximately 80,995 units, followed by MEDIUM CERAMIC TOP STORAGE JAR
+with approximately 74,494 units.
+
+The MEDIUM CERAMIC TOP STORAGE JAR is particularly unusual, with
+74,494 cancelled units compared with 3,553 sold units. This gives a
+cancellation unit rate of approximately 95.4%.
+
+These products should be reviewed further to understand whether the high
+cancellation volumes are related to bulk transactions, operational issues,
+or other business processes.
+
+::: {.callout-note}
+The product cancellation rate measures cancelled units relative to sold
+and cancelled units. It is not the percentage of customer orders that were
+cancelled.
+:::
+
+
+### Cancellation by Country
+
+This section examines the geographic distribution of cancelled units, cancelled sales value, and cancelled orders to identify markets with the highest cancellation activity.
+
+```{r}
+top_cancellations_countries <- readr::read_csv(
+  "../outputs/tables/top_cancellations_countries.csv",
+  show_col_types = FALSE
+)
+
+knitr::kable(
+  top_cancellations_countries,
+  digits = 2,
+  caption = "Top 10 Countries by Cancelled Quantity"
+)
+```
+
+```{r}
+knitr::include_graphics(
+  "../outputs/plots/country_cancellations.png"
+)
+```
+
+The United Kingdom has by far the highest cancellation activity, with
+approximately 256,111 cancelled units, 3,029 cancelled orders, and
+434.1K in cancelled sales value.
+
+The UK accounts for approximately 95% of cancelled units and 93% of
+cancelled sales value. This is consistent with the UK's much larger
+overall sales and order activity.
+
+EIRE, Germany, France, and the USA are the next largest contributors, but
+their cancellation volumes are substantially lower than the UK.
+
+Because the UK is also the largest market, high cancellation volume does
+not necessarily mean that it has the highest cancellation rate. Country
+cancellation rates should be compared with the size of each market for a
+fairer assessment.
+
+
+### Monthly Cancellation Trends
+
+This section examines how cancellation activity changes over time and identifies periods with unusually high cancelled quantities, orders, or sales value.
+
+```{r}
+knitr::include_graphics(
+  "../outputs/plots/monthly_cancellations.png"
+)
+```
+
+Cancellation activity varies considerably across the period, with notable
+spikes in January 2011 and December 2011.
+
+January recorded approximately 79,784 cancelled units and 91.5K in
+cancelled sales value. December recorded the highest cancelled sales value
+at approximately 175.2K and the highest cancelled quantity at
+approximately 83,540 units.
+
+The December spike is particularly notable because it occurred across only
+139 cancelled orders. This suggests that a relatively small number of
+large-volume transactions had a strong effect on the monthly totals.
+
+These unusual periods should be reviewed alongside product and
+transaction-level data to understand the reasons for the large
+cancellations.
+
+
+### Key Business Insights
+
+* **Cancellation level:** 3,422 cancelled orders resulted in an overall order cancellation rate of **14.8%**, with approximately **270,017 units** and **475.9K** in cancelled sales value.
+
+* **Product concentration:** Cancellation activity is highly concentrated in a small number of products. **PAPER CRAFT, LITTLE BIRDIE** and **MEDIUM CERAMIC TOP STORAGE JAR** account for exceptionally high cancelled quantities and warrant further investigation.
+
+* **Geographic concentration:** The **United Kingdom** accounts for approximately **95% of cancelled units** and **96% of cancelled sales value**, consistent with its dominant position in overall business activity.
+
+* **Time concentration:** Cancellation activity shows notable spikes in **January 2011 and December 2011**, with December recording the highest cancelled sales value.
+
+* **Business focus:** Further investigation should prioritise unusually large product cancellations, high-volume cancellation transactions, and cancellation rates relative to sales or order activity across countries and periods.
+

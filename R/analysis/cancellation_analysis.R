@@ -15,6 +15,7 @@ source(here::here("R", "helpers", "load_data.R"))
 source(here::here("R", "helpers", "helper_functions.R"))
 source(here::here("R", "helpers", "plot_theme.R"))
 source(here::here("R", "helpers", "save_outputs.R"))
+source(here::here("R", "helpers", "non_merchandise_codes.R"))
 
 print_section("Cancellation Analysis")
 
@@ -47,11 +48,22 @@ retail_features |>
   head(20)
 
 
-# Define cancellations dataset
+## Define cancellations dataset
+
+# Keep cancelled merchandise transactions for cancellation analysis.
+# Exclude non-merchandise items from cancellation metrics.
 
 cancellation_data <-
   retail_features |> 
-  filter(is_cancelled)
+  filter(is_cancelled) |> 
+  mutate(
+    stock_code = str_to_upper(stock_code)
+  ) |> 
+  anti_join(
+    non_merchandise,
+    by = "stock_code"
+  )
+  
 
 
 # cancellations Summary
@@ -67,13 +79,26 @@ cancellations_summary <-
 print(cancellations_summary)
 
 
-# Calculate Order cancellations Rate
+## Define Valid Sales Data
+
+# Keep valid product sales for calculating cancellation rates.
+# Exclude cancellations, invalid quantities/prices, cancellation pairs,
+# and non-merchandise transactions.
 
 sales_data <-
   retail_features |> 
   filter(
     !is_cancelled,
-    quantity > 0
+    quantity > 0,
+    unit_price > 0,
+    !is_cancelled_pair
+  ) |> 
+  mutate(
+    stock_code = str_to_upper(stock_code)
+  ) |> 
+  anti_join(
+    non_merchandise,
+    by = "stock_code"
   )
 
 
@@ -91,7 +116,8 @@ cancelled_orders <-
 total_orders_all <-
   total_orders + cancelled_orders
 
-# Order-level cancellations rate
+
+# Calculate the proportion of all orders that were cancelled.
 
 order_cancellation_rate  <-
   cancelled_orders / total_orders_all
@@ -123,13 +149,10 @@ cancellation_kpis <-
 print(cancellation_kpis)
 
 
-# cancellations by Product
+## Cancellation Analysis by Product
 
 product_cancellations <-
   cancellation_data |> 
-  filter(
-    stock_code != "M"
-  ) |> 
   group_by(
     stock_code,
     description
@@ -140,15 +163,14 @@ product_cancellations <-
     cancelled_orders = n_distinct(invoice_no),
     .groups = "drop"
   ) |> 
-  arrange(
-    desc(units_cancelled)
+  arrange(desc(units_cancelled)
   )
  
  
 print(product_cancellations)
 
 
-# Top 10 cancelled Products
+## Top 10 cancelled Products
 
 top_cancelled_products <-
   product_cancellations |> 
@@ -158,7 +180,7 @@ top_cancelled_products <-
 print(top_cancelled_products)
 
 
-# Plot Top cancelled Products
+## Plot Top cancelled Products
 
 top_cancelled_products_plot <-
   ggplot(
@@ -184,7 +206,7 @@ print(top_cancelled_products_plot)
 
 
 
-# cancellations by Country
+## Cancellation Analysis by Country
 
 country_cancellations <-
   cancellation_data |> 
@@ -195,8 +217,7 @@ country_cancellations <-
     cancelled_orders = n_distinct(invoice_no),
     .groups = "drop"
   ) |> 
-  arrange(
-    desc(units_cancelled)
+  arrange(desc(units_cancelled)
   )
 
 
@@ -204,7 +225,7 @@ print(country_cancellations)
 
 
 
-# Top 10 countries by cancelled quantity
+## Top 10 Countries by Cancelled Quantity
 
 top_cancellations_countries <-
   country_cancellations |> 
@@ -284,7 +305,7 @@ monthly_cancellations_plot <-
   scale_y_continuous(labels = scales::comma) +
   labs(
     title = "Monthly Cancelled Transaction Value",
-    subtitle = "Value associated with cancelled transactions",
+    subtitle = "Total value associated with cancelled transactions",
     x = NULL,
     y = "Cancelled Value",
   ) +
@@ -298,8 +319,6 @@ print(monthly_cancellations_plot)
 
 # Product cancellations Rate
 
-# Product Sales
-
 product_sales <-
   sales_data |>
   group_by(stock_code, description) |> 
@@ -310,34 +329,36 @@ product_sales <-
   )
   
 
-# Product cancellations
 
-product_cancellations <-
+product_cancellations_rate <-
   cancellation_data |> 
   group_by(stock_code, description) |> 
   summarise(
     units_cancelled  = sum(abs(quantity), na.rm = TRUE),
     cancelled_value = sum(abs(sales_amount), na.rm = TRUE),
+    cancelled_orders = n_distinct(invoice_no),
     .groups = "drop"
   )
 
 
-# Join Sales and cancellations
+## Combine Product Sales and Cancellation Data
 
 product_cancellation_analysis <-
   product_sales |> 
   left_join(
-    product_cancellations,
+    product_cancellations_rate,
     by = c("stock_code", "description")
     ) |> 
   mutate(
     units_cancelled = replace_na(units_cancelled, 0),
     cancelled_value = replace_na(cancelled_value, 0),
-    cancelled_orders = replace_na(cancelled_orders, 0)
+    cancelled_orders = replace_na(cancelled_orders, 0),
+    cancellation_rate =
+      units_cancelled / (units_sold + units_cancelled)
   )
 
 
-print(product_cancellation_analysis)
+print(product_cancellation_analysis, width = Inf)
 
 
 
@@ -359,9 +380,22 @@ save_table(
   "product_cancellations.csv"
 )
 
+
+save_table(
+  top_cancelled_products,
+  "top_cancelled_products.csv"
+)
+
+
 save_table(
   country_cancellations,
   "country_cancellations.csv"
+)
+
+
+save_table(
+  top_cancellations_countries,
+  "top_cancellations_countries.csv"
 )
 
 
