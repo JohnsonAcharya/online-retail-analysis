@@ -835,3 +835,22 @@ cancellations.
 
 * **Business focus:** Further investigation should prioritise unusually large product cancellations, high-volume cancellation transactions, and cancellation rates relative to sales or order activity across countries and periods.
 
+
+
+# Overall Business Recommendations
+
+Based on the analysis, the following actions are recommended:
+
+- **Improve customer retention:** Around **34.4%** of customers are one-time buyers. Targeted offers and follow-up campaigns could help convert more of them into repeat customers.
+
+- **Reduce UK market dependence:** The UK generates approximately **85% of revenue**. The business should maintain its strong UK position while developing markets such as the **Netherlands, EIRE, Germany, and France**.
+
+- **Investigate cancellations:** Cancellations account for approximately **14.8%** of orders and **475.9K** in cancelled sales value. Large cancellation transactions and products with unusually high cancellation volumes should be investigated.
+
+- **Plan around seasonal demand:** Sales are strongest during the later months of the year, particularly **September to November**. Inventory, staffing, and marketing should be planned accordingly.
+
+- **Monitor product performance:** Product decisions should consider both **revenue and sales volume**, along with cancellation activity, rather than relying on one metric.
+
+## Overall
+
+The main priorities are to **retain more customers, reduce unusual cancellations, strengthen international markets, and use sales patterns to improve planning and decision-making**.
