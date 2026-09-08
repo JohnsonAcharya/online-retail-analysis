@@ -85,7 +85,7 @@ top_products_revenue_plot <-
   labs(
     title = "Top Products by Revenue",
     x = NULL,
-     y = "Revenue"
+    y = "Revenue"
     ) +
   theme_retail()
 

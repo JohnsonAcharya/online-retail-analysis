@@ -5,7 +5,7 @@
 
 
 # Load Packages
-
+#--------------------------------------------------------------
 library(shiny)
 library(shinydashboard)
 library(tidyverse)
@@ -13,11 +13,22 @@ library(lubridate)
 library(here)
 
 
+# Load Helpers
+
+source(here::here("R", "helpers", "plot_theme.R"))
+source(here::here("R", "helpers", "non_merchandise_codes.R"))
 
 
-# Load feature Date
+# Load Dashboard Modules
+#--------------------------------------------------------------
+source(here::here("shiny", "modules", "mod_overview.R"))
 
-features <- readRDS(
+
+
+
+# Load feature Data
+
+retail_features <- readRDS(
   here("data", "features", "retail_features.rds")
 )
 
@@ -84,7 +95,8 @@ ui <- dashboardPage(
         p(
           "Interactive dashboard for Online Retail sales,
           customer,product, country and cancellation analysis."
-        )
+        ),
+        overview_ui("overview")
       ),
       
       # Sales
@@ -136,6 +148,11 @@ ui <- dashboardPage(
 
 server <- function(input, output, session) {
   
+  overview_server(
+    id = "overview",
+    data = retail_features
+  )
+  
 }
 
-shinyApp(ui, server)
+shinyApp(ui = ui, server = server)
