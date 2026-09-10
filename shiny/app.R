@@ -22,7 +22,7 @@ source(here::here("R", "helpers", "non_merchandise_codes.R"))
 # Load Dashboard Modules
 #--------------------------------------------------------------
 source(here::here("shiny", "modules", "mod_overview.R"))
-
+source(here::here("shiny", "modules", "mod_sales.R"))
 
 
 
@@ -104,7 +104,8 @@ ui <- dashboardPage(
       tabItem(
         tabName = "sales",
         h2("Sales Performance"),
-        p("Sales analysis will be added")
+        p("Explore sales performance, revenue trends, and order activity"),
+        sales_ui("sales")
       ),
       
       # Products
@@ -150,6 +151,11 @@ server <- function(input, output, session) {
   
   overview_server(
     id = "overview",
+    data = retail_features
+  )
+  
+  sales_server(
+    id = "sales",
     data = retail_features
   )
   
