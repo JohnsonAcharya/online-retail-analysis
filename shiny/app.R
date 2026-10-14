@@ -23,7 +23,7 @@ source(here::here("R", "helpers", "non_merchandise_codes.R"))
 #--------------------------------------------------------------
 source(here::here("shiny", "modules", "mod_overview.R"))
 source(here::here("shiny", "modules", "mod_sales.R"))
-
+source(here::here("shiny", "modules", "mod_products.R"))
 
 
 # Load feature Data
@@ -113,7 +113,9 @@ ui <- dashboardPage(
       tabItem(
         tabName = "products",
         h2("Products Performance"),
-        p("Products analysis will be added")
+        p("Explore product revenue, sales volume, ",
+          "and best-performing merchandise"),
+        products_ui("products")
       ),
       
       # Customers
@@ -159,6 +161,10 @@ server <- function(input, output, session) {
     data = retail_features
   )
   
+  products_server(
+    id = "products",
+    data = retail_features
+  )
 }
 
 shinyApp(ui = ui, server = server)
